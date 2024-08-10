@@ -10,14 +10,15 @@ fn main( ) {
     let config_file = &args[1];
     let data_path = &args[2];
     let config_info = fs::read_to_string(config_file).unwrap();
-    let mut save_path =PathBuf::from(data_path);
-    save_path.push("save");
+    let mut save_path =PathBuf::from("./save");
     DirBuilder::new().recursive(true).create(save_path);
-    save_path=PathBuf::from(data_path);
-    save_path.push("save/gfwlist.txt");
+    save_path=PathBuf::from("./save/gfwlist.txt");
     let mut file = File::create(save_path).unwrap();
     for a in config_info.split(',')
     {
+        if a.is_empty(){
+            continue;
+        }
         let mut path = PathBuf::from(data_path);
         path.push(a);
         for b in read_lines(path).unwrap()
