@@ -6,6 +6,7 @@ use std::path::Path;
 use std::path::PathBuf;
 fn main( ) {
     let args: Vec<String> = env::args().collect();
+    println!("{}",&args[0]);
     let config_file = &args[1];
     let data_path = &args[2];
     let config_info = fs::read_to_string(config_file).unwrap();
@@ -24,7 +25,7 @@ fn main( ) {
             let c = b.unwrap();
             //println!("{}", c);       
             if let Some(d) = get_domain(&c){
-                println!("{}", d);    
+                //println!("{}", d);    
                 file.write_all(d.as_bytes());
                 file.write_all(b"\n");
             }
@@ -33,8 +34,7 @@ fn main( ) {
         }
         
     }
-
-    println!("Hello, world!");
+    println!("finshed");
 }
 fn get_domain(line:&String) -> Option<String> 
 {
