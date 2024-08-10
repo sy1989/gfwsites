@@ -22,4 +22,4 @@ jobs:
         repository: v2fly/domain-list-community
         path: community
     - name: Run tests
-      run: cargo run -- ./config.txt -- ./community/data
+      run: cargo run -- ./config.txt ./community/data
