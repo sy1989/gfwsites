@@ -21,5 +21,7 @@ jobs:
       with:
         repository: v2fly/domain-list-community
         path: community
-    - name: Run tests
+    - name: Run
       run: cargo run -- ./config.txt ./community/data
+    - name: Show File
+      run: cat ./community/data/gfwlist.txt
