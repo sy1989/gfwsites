@@ -1,15 +1,15 @@
 name: Rust
-
 on:
   push:
     branches: [ "master" ]
+  schedule:
+    - cron: '5 3,9 * * *'
   workflow_dispatch:
     inputs:
-      ssh:
-        description: 'SSH connection to Actions'
+      force:
+        description: 'Force Update'
         required: false
         default: 'false'
-
 env:
   CARGO_TERM_COLOR: always
 
@@ -19,17 +19,81 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Get Version
+      id: check
+      run: |
+        echo ${{github.event_name}}
+        DATA=$(git ls-remote  https://github.com/v2fly/domain-list-community HEAD | head -n 1 | cut -f1)
+        GFW=$(git ls-remote  https://github.com/gfwlist/gfwlist/ HEAD | head -n 1 | cut -f1)
+        echo "$DATA"
+        echo "$GFW"
+        echo ${{vars.DATA_SHA}}
+        echo "DATA_GFW=${DATA}_${GFW}" >> $GITHUB_ENV
+    - name: Check Version
+      if: env.DATA_GFW != vars.DATA_SHA || github.event_name == 'push' || ( github.event_name == 'workflow_dispatch' && github.event.inputs.force != 'false' )
+      run: |
+        echo "JIXU=true" >> $GITHUB_ENV      
     - name: Checkout v2fly/domain-list-community
       uses: actions/checkout@v4
+      if: env.JIXU == 'true'
       with:
         repository: v2fly/domain-list-community
         path: community
+    - name: Checkout cokebar/gfwlist2dnsmasq
+      uses: actions/checkout@v4
+      if: env.JIXU == 'true'
+      with:
+        repository: cokebar/gfwlist2dnsmasq
+        path: gfwlist2dnsmasq
+    - name: Generate GFWList domains
+      if: env.JIXU == 'true'
+      run: |
+        cd gfwlist2dnsmasq || exit 1
+        chmod +x ./gfwlist2dnsmasq.sh
+        ./gfwlist2dnsmasq.sh -l -o ../community/data/gfwlist
     - name: Run
-      run: cargo run -- ./config.txt ./community/data
-    - name: SSH connection to Actions
-      uses: P3TERX/ssh2actions@v1.0.0
-      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+      if: env.JIXU == 'true'
+      run: |
+         cargo run -- ./config.txt ./community/data
+    - name: Generate release tag
+      id: tag
+      if: env.JIXU == 'true'
+      run: |
+        touch release.txt
+        echo "$(date +"%Y.%m.%d-%H%M")" >> release.txt
+        echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
+        cd save
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+    - name: Upload firmware to release
+      uses: softprops/action-gh-release@v2
+      if: env.JIXU == 'true'
       env:
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.release_tag }}
+        body_path: release.txt
+        files: ${{ env.FIRMWARE }}/*
+    - name: Update_SHA
+      uses: NikhilVashistha/update-github-action-secret@v1.0.3
+      if: env.JIXU == 'true'
+      with:
+        github_token: ${{ secrets.TOKEN }}
+        variable: true
+        variable_name: 'DATA_SHA'
+        variable_value: ${{ env.DATA_GFW }}
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@v2
+      if: env.JIXU == 'true'
+      with:
+        retain_days: 3
+        keep_minimum_runs: 5
+    - name: Remove old Releases
+      uses: dev-drprasad/delete-older-releases@v0.3.4
+      if: env.JIXU == 'true'
+      with:
+        keep_latest: 10
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
