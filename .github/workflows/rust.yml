@@ -5,6 +5,12 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+    workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH connection to Actions'
+        required: false
+        default: 'false'
 
 env:
   CARGO_TERM_COLOR: always
@@ -23,5 +29,9 @@ jobs:
         path: community
     - name: Run
       run: cargo run -- ./config.txt ./community/data
-    - name: Show File
-      run: cat ./community/data/gfwlist.txt
+    - name: SSH connection to Actions
+      uses: P3TERX/ssh2actions@v1.0.0
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+      env:
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
