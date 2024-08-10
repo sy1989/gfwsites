@@ -54,12 +54,17 @@ fn get_domain(line:&String) -> Option<String>
         if l.starts_with("full:") {
             l = &l[5..];           
         }
-        if l.contains("@") {
+        if l.contains('@') {
             //println!("{}", l);    
             let c :Vec<&str> = l.split('@').collect();
             if c[1]=="cn" {
                 return None;
             }
+            l = c[0].trim();
+            //println!("{}", l);   
+        }
+        if l.contains('#') {   
+            let c :Vec<&str> = l.split('#').collect();
             l = c[0].trim();
             //println!("{}", l);   
         }
