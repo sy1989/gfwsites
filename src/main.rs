@@ -37,7 +37,7 @@ fn main( ) {
     }
     println!("finshed");
 }
-fn get_domain(line:&String) -> Option<String> 
+fn get_domain(line:&String) -> Option<&str> 
 {
     let mut l =line.trim();
     if l.is_empty()
@@ -68,8 +68,8 @@ fn get_domain(line:&String) -> Option<String>
             l = c[0].trim();
             //println!("{}", l);   
         }
-        let ll =String::from(l);
-        return  Some(ll);
+        //let ll =String::from(l);
+        return  Some(l);
     }
     else {
         return None;
