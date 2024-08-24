@@ -1,1 +1,1 @@
-google,youtube,netflix,openai,github,facebook,meta,instagram,telegram,twitter,shopify,tiktok,category-porn,gfwlist
+google,youtube,netflix,openai,github,facebook,meta,instagram,telegram,twitter,shopify,tiktok,category-porn,gfwlist,rust
