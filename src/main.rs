@@ -12,29 +12,36 @@ fn main( ) {
     let config_info = fs::read_to_string(config_file).unwrap();
     let mut save_path =PathBuf::from("./save");
     DirBuilder::new().recursive(true).create(save_path);
-    save_path=PathBuf::from("./save/gfwlist.txt");
-    let mut file = File::create(save_path).unwrap();
-    for a in config_info.split(',')
+    //save_path=PathBuf::from("./save/gfwlist.txt");
+    for line in config_info.lines()
     {
-        if a.is_empty(){
-            continue;
-        }
-        let mut path = PathBuf::from(data_path);
-        path.push(a);
-        for b in read_lines(path).unwrap()
+        let l:Vec<&str> = line.split(':').collect();
+        save_path=PathBuf::from("./save");
+        save_path.push(l[0]);
+        let mut file = File::create(save_path).unwrap();
+        for a in l[1].split(',')
         {
-            let c = b.unwrap();
-            //println!("{}", c);       
-            if let Some(d) = get_domain(&c){
-                //println!("{}", d);    
-                file.write_all(d.as_bytes());
-                file.write_all(b"\n");
+            if a.is_empty(){
+                continue;
+            }
+            let mut path = PathBuf::from(data_path);
+            path.push(a);
+            for b in read_lines(path).unwrap()
+            {
+                let c = b.unwrap();
+                //println!("{}", c);       
+                if let Some(d) = get_domain(&c){
+                    //println!("{}", d);    
+                    file.write_all(d.as_bytes());
+                    file.write_all(b"\n");
+                }
+                
+                  
             }
             
-              
         }
-        
     }
+
     println!("finshed");
 }
 fn get_domain(line:&String) -> Option<&str> 
@@ -57,8 +64,10 @@ fn get_domain(line:&String) -> Option<&str>
         if l.contains('@') {
             //println!("{}", l);    
             let c :Vec<&str> = l.split('@').collect();
-            if c[1]=="cn" {
-                return None;
+            for i in 1..c.len(){
+                if c[i].trim()=="cn" {
+                    return None;
+                }
             }
             l = c[0].trim();
             //println!("{}", l);   
