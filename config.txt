@@ -1,3 +1,3 @@
 gfwlist.txt:google,youtube,netflix,disney,openai,github,facebook,meta,instagram,telegram,twitter,tiktok,category-porn,gfwlist,rust
 unlock.txt:netflix,disney,openai,tiktok
-unlock_local.txt:dmm
+unlock_local.txt:dmm,dmm-porn
