@@ -19,7 +19,7 @@ fn main( ) {
         let ll:Vec<&str> = l[0].split('|').collect();
         save_path=PathBuf::from("./save");
         save_path.push(ll[0]);
-        let mut file = OpenOptions::new().write(true).create(true).open(save_path).unwrap();
+        let mut file = OpenOptions::new().write(true).create(true).append(true).open(save_path).unwrap();
         for a in l[1].split(',')
         {
             if a.is_empty(){
