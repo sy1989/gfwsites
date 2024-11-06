@@ -1,5 +1,5 @@
 use std::env;
-use std::fs::{self, DirBuilder};
+use std::fs::{self, DirBuilder,OpenOptions};
 use std::fs::File;
 use std::io::{self, BufRead, Write};
 use std::path::Path;
@@ -16,9 +16,10 @@ fn main( ) {
     for line in config_info.lines()
     {
         let l:Vec<&str> = line.split(':').collect();
+        let ll:Vec<&str> = l[0].split('|').collect();
         save_path=PathBuf::from("./save");
-        save_path.push(l[0]);
-        let mut file = File::create(save_path).unwrap();
+        save_path.push(ll[0]);
+        let mut file = OpenOptions::new().write(true).create(true).open(save_path).unwrap();
         for a in l[1].split(',')
         {
             if a.is_empty(){
@@ -32,7 +33,16 @@ fn main( ) {
                 //println!("{}", c);       
                 if let Some(d) = get_domain(&c){
                     //println!("{}", d);    
+                    if ll.len() > 1 {
+                        file.write_all(b"address /"); 
+
+                    }                   
                     file.write_all(d.as_bytes());
+                    if ll.len() > 1 {
+                        file.write_all(b"/"); 
+                        file.write_all(ll[1].as_bytes()); 
+
+                    }
                     file.write_all(b"\n");
                 }
                 
@@ -40,6 +50,7 @@ fn main( ) {
             }
             
         }
+        
     }
 
     println!("finshed");
