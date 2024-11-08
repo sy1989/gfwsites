@@ -11,7 +11,7 @@ fn main( ) {
     let data_path = &args[2];
     let config_info = fs::read_to_string(config_file).unwrap();
     let mut save_path =PathBuf::from("./save");
-    DirBuilder::new().recursive(true).create(save_path);
+    let _ = DirBuilder::new().recursive(true).create(save_path);
     //save_path=PathBuf::from("./save/gfwlist.txt");
     for line in config_info.lines()
     {
@@ -34,16 +34,16 @@ fn main( ) {
                 if let Some(d) = get_domain(&c){
                     //println!("{}", d);    
                     if ll.len() > 1 {
-                        file.write_all(b"address /"); 
+                        let _ = file.write_all(b"address /"); 
 
                     }                   
-                    file.write_all(d.as_bytes());
+                    let _ = file.write_all(d.as_bytes());
                     if ll.len() > 1 {
-                        file.write_all(b"/"); 
-                        file.write_all(ll[1].as_bytes()); 
+                        let _ = file.write_all(b"/"); 
+                        let _ = file.write_all(ll[1].as_bytes()); 
 
                     }
-                    file.write_all(b"\n");
+                    let _ = file.write_all(b"\n");
                 }
                 
                   
