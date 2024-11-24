@@ -21,12 +21,15 @@ fn main( ) {
         }
         let ll:Vec<&str> = l[0].split('|').collect();
         let lll:Vec<&str> = l[1].split(',').collect();
-        if lll.len()<2 && lll[0].is_empty() {
-            continue;
-        }
+
         save_path=PathBuf::from("./save");
         save_path.push(ll[0]);
         let mut file = OpenOptions::new().write(true).create(true).append(true).open(save_path).unwrap();
+        if lll.len()<2 && lll[0].is_empty() {
+            let _ = file.write_all(ll[0].as_bytes()); 
+            let _ = file.write_all(b"\n");
+            continue;
+        }
         for a in lll
         {
             if a.is_empty(){
