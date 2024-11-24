@@ -1,7 +1,8 @@
 gfwlist.txt:google,youtube,netflix,disney,hbo,openai,github,facebook,meta,instagram,telegram,twitter,tiktok,category-porn,gfwlist,rust,dmm,dmm-porn
-unlock-by-sg.txt:netflix,disney,hbo,openai,tiktok
-unlock-alice-hk.txt:
-unlock-alice-sg.txt:
+unlock-by-sg.txt:netflix,disney,hbo,tiktok
+unlock-alice-hk.txt:netflix,disney,hbo,tiktok
+unlock-alice-sg.txt:netflix,disney,hbo,tiktok
 unlock-laoyizi.txt:dmm
+unlock-openai.txt:openai
 unlock-oracle-jp.txt:dmm-porn
-unlock.txt|2.2.2.2:netflix,disney,openai,tiktok
+unlock.txt|2.2.2.2:
