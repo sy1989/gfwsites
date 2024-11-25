@@ -35,6 +35,7 @@ fn main( ) {
             if a.is_empty(){
                 continue;
             }
+            println!("opening {}", a); 
             let mut path = PathBuf::from(data_path);
             path.push(a);
             let  white = get_white_list(ll[0]);
@@ -43,15 +44,14 @@ fn main( ) {
                 let c = b.unwrap();
                 //println!("{}", c);       
                 if let Some(d) = get_domain(&c){
+                    //println!("get:{}", d);
                     if let Some(whitelist) = white.as_ref() {  // 使用 as_ref() 来借用
                         if whitelist.contains(&d) {
+                            println!("in white: {}", &d); 
                             continue;
                         }
-                    }
-                    else {
-                        continue;
-                    }
-                    //println!("{}", d);    
+                    }                    
+                    //println!("waiting write:{}", d);    
                     if ll.len() > 1 {
                         let _ = file.write_all(ll[1].as_bytes()); 
                         let _ = file.write_all(d.as_bytes());
@@ -59,6 +59,7 @@ fn main( ) {
 
                     } 
                     else {
+                        //println!("writing {}", d);
                         let _ = file.write_all(d.as_bytes());
                     }                  
 
@@ -73,9 +74,9 @@ fn main( ) {
     }
 
     println!("finshed");
-}
+} 
 fn get_white_list(filename:&str) ->Option<Vec<String>>{
-    let mut path: PathBuf= PathBuf::from("./white");
+    let  mut path: PathBuf= PathBuf::from("./white");
     path.push(filename);
 
     match File::open(path) {
@@ -91,6 +92,7 @@ fn get_white_list(filename:&str) ->Option<Vec<String>>{
         },
         Err(_) => None,
     }
+    
 }
 fn get_domain(line:&String) -> Option<String> 
 {
