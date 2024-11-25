@@ -1,7 +1,7 @@
 use std::env;
 use std::fs::{self, DirBuilder,OpenOptions};
 use std::fs::File;
-use std::io::{self, BufRead, Write};
+use std::io::{self, BufRead, BufReader, Write};
 use std::path::Path;
 use std::path::PathBuf;
 fn main( ) {
@@ -37,22 +37,31 @@ fn main( ) {
             }
             let mut path = PathBuf::from(data_path);
             path.push(a);
+            let mut white = get_white_list(ll[0]);
             for b in read_lines(path).unwrap()
             {
                 let c = b.unwrap();
                 //println!("{}", c);       
                 if let Some(d) = get_domain(&c){
+                    if let Some(whitelist) = white.as_ref() {  // 使用 as_ref() 来借用
+                        if whitelist.contains(&d) {
+                            continue;
+                        }
+                    }
+                    else {
+                        continue;
+                    }
                     //println!("{}", d);    
                     if ll.len() > 1 {
-                        let _ = file.write_all(b"address /"); 
-
-                    }                   
-                    let _ = file.write_all(d.as_bytes());
-                    if ll.len() > 1 {
-                        let _ = file.write_all(b"/"); 
                         let _ = file.write_all(ll[1].as_bytes()); 
+                        let _ = file.write_all(d.as_bytes());
+                        let _ = file.write_all(ll[2].as_bytes());
 
-                    }
+                    } 
+                    else {
+                        let _ = file.write_all(d.as_bytes());
+                    }                  
+
                     let _ = file.write_all(b"\n");
                 }
                 
@@ -65,7 +74,25 @@ fn main( ) {
 
     println!("finshed");
 }
-fn get_domain(line:&String) -> Option<&str> 
+fn get_white_list(filename:&str) ->Option<Vec<String>>{
+    let mut path: PathBuf= PathBuf::from("./white");
+    path.push(filename);
+
+    match File::open(path) {
+        Ok(file) => {
+            let reader = BufReader::new(file);
+
+            
+            let lines: Vec<String> = reader
+                .lines() 
+                .filter_map(Result::ok) 
+                .collect(); 
+            Some(lines)
+        },
+        Err(_) => None,
+    }
+}
+fn get_domain(line:&String) -> Option<String> 
 {
     let mut l =line.trim();
     if l.is_empty()
@@ -98,8 +125,8 @@ fn get_domain(line:&String) -> Option<&str>
             l = c[0].trim();
             //println!("{}", l);   
         }
-        //let ll =String::from(l);
-        return  Some(l);
+        let ll =String::from(l);
+        return  Some(ll);
     }
     else {
         return None;
