@@ -3,4 +3,4 @@ unlock-media.txt:netflix,disney,hbo,tiktok
 unlock-dmm.txt:dmm
 unlock-openai.txt:openai
 unlock-dmm.co.jp.txt:dmm-porn
-unlock.txt|2.2.2.2:
+unlock.txt|address /|/2.2.2.2:
