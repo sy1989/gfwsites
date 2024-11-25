@@ -37,7 +37,7 @@ fn main( ) {
             }
             let mut path = PathBuf::from(data_path);
             path.push(a);
-            let mut white = get_white_list(ll[0]);
+            let  white = get_white_list(ll[0]);
             for b in read_lines(path).unwrap()
             {
                 let c = b.unwrap();
