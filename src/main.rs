@@ -28,13 +28,13 @@ fn main( ) {
         if lll.len()<2 && lll[0].is_empty() {
             if ll.len() > 1 {
                         let _ = file.write_all(ll[1].as_bytes()); 
-                        let _ = file.write_all(d.as_bytes());
+                        let _ = file.write_all(ll[0].as_bytes());
                         let _ = file.write_all(ll[2].as_bytes());
 
                     } 
                     else {
                         //println!("writing {}", d);
-                        let _ = file.write_all(d.as_bytes());
+                        let _ = file.write_all(ll[0].as_bytes());
                     }    
             let _ = file.write_all(b"\n");
             continue;
