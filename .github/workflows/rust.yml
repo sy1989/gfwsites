@@ -50,6 +50,7 @@ jobs:
     - name: Generate GFWList domains
       if: env.JIXU == 'true'
       run: |
+        cp ./custom ./community/data/custom
         cd gfwlist2dnsmasq || exit 1
         chmod +x ./gfwlist2dnsmasq.sh
         ./gfwlist2dnsmasq.sh -l -o ../community/data/gfwlist
