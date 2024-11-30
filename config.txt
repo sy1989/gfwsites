@@ -4,3 +4,4 @@ unlock-dmm.txt:dmm
 unlock-openai.txt:openai
 unlock-dmm.co.jp.txt:dmm-porn
 unlock.txt|address /|/2.2.2.2:
+dnsmasq_sg_media.txt|address=/|/89.34.227.29:netflix,disney,hbo,tiktok,openai
