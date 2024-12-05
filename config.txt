@@ -1,4 +1,4 @@
-gfwlist.txt:google,youtube,netflix,disney,hbo,openai,github,facebook,meta,instagram,telegram,twitter,tiktok,category-porn,gfwlist,rust,dmm,dmm-porn,custom
+gfwlist.txt:google,youtube,netflix,disney,hbo,openai,github,facebook,meta,instagram,telegram,twitter,tiktok,category-porn,gfwlist,rust,dmm,dmm-porn,microsoft-dev,custom
 unlock-media.txt:netflix,disney,hbo,tiktok
 unlock-dmm.txt:dmm
 unlock-openai.txt:openai
