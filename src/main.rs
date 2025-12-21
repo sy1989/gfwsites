@@ -25,7 +25,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             continue;
         }
         let ll: Vec<&str> = l[0].split('|').collect();
-        let lll: Vec<&str> = l[1].split(',').collect();
+        let mut lll: Vec<String> = l[1].split(',').map(|s| s.to_string()).collect();
 
         save_path = PathBuf::from("./save");
         save_path.push(ll[0]);
@@ -47,10 +47,14 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             writer.write_all(b"\n")?;
             continue;
         }
-        for a in lll {
+        let mut i = 0;
+        while i < lll.len() {
+            let a = lll[i].trim();
             if a.is_empty() {
+                i += 1;
                 continue;
             }
+            i += 1;
             println!("opening {}", a);
             let mut path = PathBuf::from(data_path);
             path.push(a);
@@ -60,25 +64,33 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     for line in read_lines(path)? {
                         //let c = b?;
                         //println!("{}", c);
-                        if let Some(d) = get_domain(&line?) {
-                            //println!("get:{}", d);
+                        let lineresult = get_domain(&line?);
+                        match lineresult {
+                            MyOption::Domain(d) => {
+                                if whitelist.contains(&d) {
+                                    println!("in white: {}", &d);
+                                    continue;
+                                }
 
-                            if whitelist.contains(&d) {
-                                println!("in white: {}", &d);
-                                continue;
+                                //println!("waiting write:{}", d);
+                                if ll.len() > 1 {
+                                    writer.write_all(ll[1].as_bytes())?;
+                                    writer.write_all(d.as_bytes())?;
+                                    writer.write_all(ll[2].as_bytes())?;
+                                } else {
+                                    //println!("writing {}", d);
+                                    writer.write_all(d.as_bytes())?;
+                                }
+
+                                writer.write_all(b"\n")?;
                             }
-
-                            //println!("waiting write:{}", d);
-                            if ll.len() > 1 {
-                                writer.write_all(ll[1].as_bytes())?;
-                                writer.write_all(d.as_bytes())?;
-                                writer.write_all(ll[2].as_bytes())?;
-                            } else {
-                                //println!("writing {}", d);
-                                writer.write_all(d.as_bytes())?;
+                            MyOption::Include(newfile) => {
+                                println!("found include: {}", newfile);
+                                if !lll.contains(&newfile) {
+                                    lll.push(newfile);
+                                }
                             }
-
-                            writer.write_all(b"\n")?;
+                            MyOption::None => continue,
                         }
                     }
                 }
@@ -106,15 +118,23 @@ fn get_white_list(filename: &str) -> io::Result<HashSet<String>> {
         Err(e) => Err(e),
     }
 }
-fn get_domain(line: &String) -> Option<String> {
+enum MyOption<T> {
+    Domain(T),  // 有值
+    Include(T), // 默认值
+    None,       // 无值
+}
+fn get_domain(line: &String) -> MyOption<String> {
     let mut l = line.trim();
     if l.is_empty() {
-        return None;
+        return MyOption::None;
     } else if l.starts_with('#') {
-        return None;
+        return MyOption::None;
+    } else if l.starts_with("include:") {
+        l = &l[8..];
+        return MyOption::Include(l.to_string());
     } else if l.contains('.') {
         if l.starts_with("regexp:") || l.starts_with("include:") {
-            return None;
+            return MyOption::None;
         }
         if l.starts_with("full:") {
             l = &l[5..];
@@ -124,7 +144,7 @@ fn get_domain(line: &String) -> Option<String> {
             let c: Vec<&str> = l.split('@').collect();
             for i in 1..c.len() {
                 if c[i].trim() == "cn" {
-                    return None;
+                    return MyOption::None;
                 }
             }
             l = c[0].trim();
@@ -136,11 +156,12 @@ fn get_domain(line: &String) -> Option<String> {
             //println!("{}", l);
         }
         //let ll = String::from(l);
-        return Some(l.to_string());
+        return MyOption::Domain(l.to_string());
     } else {
-        return None;
+        return MyOption::None;
     }
 }
+
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where
     P: AsRef<Path>,
