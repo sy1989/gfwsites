@@ -4,7 +4,7 @@ unlock-netflix.txt:netflix
 unlock-disney.txt:disney
 unlock-hbo.txt:hbo
 unlock-dmm.txt:dmm
-unlock-openai.txt:openai,google-deepmind
+unlock-openai.txt:openai
 unlock-dmm.co.jp.txt:dmm-porn
 unlock-ins.txt:instagram
 google.txt:google,google-deepmind
