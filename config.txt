@@ -7,6 +7,7 @@ unlock-dmm.txt:dmm
 unlock-openai.txt:openai,google-deepmind
 unlock-dmm.co.jp.txt:dmm-porn
 unlock-ins.txt:instagram
+google.txt:google,google-deepmind
 unlock.txt|address /|/2.2.2.2:
 dnsmasq_sg_media.txt|address=/|/89.34.227.29:netflix,disney,hbo,tiktok,openai,instagram,google-deepmind
 dnsmasq_hk_media.txt|address=/|/2.2.2.3:netflix,disney,hbo
